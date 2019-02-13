@@ -4,6 +4,7 @@ subtitle: Il giro del Sellaronda
 output:
   html_document:
     self_contained: false
+    toc: true
   pdf_document: default
 ---
 
@@ -75,7 +76,7 @@ Per ottenere ciò, tramite un preliminare filtro dei dati descritto precedenteme
 
 > Salendo su un impianto di risalita, arrivato a monte, quali sono gli altri impianti di risalita raggiungibili?
 
-![](imgs/ESEMPIO_MAPPING_1.png)
+![](imgs/ESEMPIO_MAPPING_2.png)
 <br><br>
 Effettuando i collegamenti tramite questa logica si sono ottenuti gli archi del grafo.
 Andando oltre, è stata creata automaticamente una matrice di adiacenza, sempre all'interno di fogli, che teneva in considerazione del mapping degli impianti.
@@ -105,12 +106,17 @@ Con `first_node` si intende il nodo (geografico) di partenza dell'impianto di ri
 
 ### Informazioni di riferimento
 
-- Numero impianti rilevati: 139.
-- Numero impianti connessi: 96.
-- Dimensione matrice di adiacenza: 139x139.
-- Numero impianti inclusi erroneamente: 1. _Questo impianto è incluso nel totale dei 139, ma non è stato incluso nelle analisi._
+Dal file json, e dai successivi filtri, sono stati rilevati 139 impianti. Di questi 139 impianti, sono stati connessi, ovvero hanno partecipato al componimento della rete, solamente 96.
+Questi 96, sono impianti che, nel processo di costruzione della matrice di adiacenza, hanno visto creare almeno un arco in ingresso o uscita dal nodo associato.
 
-Con numero di impianti connessi si intende l'effettivo numero di nodi (impianti di risalita) che compongono la rete. Tramite la struttura dati del grafo (oggetto `tbl_graph`), eliminando ogni nodo con grado 0 (ovvero senza alcun collegamento con altri impianti di risalita), sono stati tenuti in considerazione solamente i dati dei rimanenti 96 nodi.
+Quindi, per riassumere:
+- Numero impianti rilevati: 139.
+- Numero impianti connessi: 96. _Effettivo numero di nodi (impianti di risalita) che compongono la rete_
+- Dimensione matrice di adiacenza: 139x139.
+
+Tramite la struttura dati del grafo (oggetto `tbl_graph`), eliminando ogni nodo con grado 0 (ovvero senza alcun collegamento con altri impianti di risalita), sono stati tenuti in considerazione solamente i dati dei nodi connessi.
+
+> Durante le analisi, è stato rilevato, tra i 139 impianti rilevati, un impianto di una categoria che non voleva essere presa in analisi. Questo non ha influito perché l'impianto non è stato connesso alla rete, quindi scartato nel processo di costruzione di quest'ultima, e di successiva analisi. E' tenuto in considerazione solo all'interno della matrice di adiacenza.
 
 # Analisi esplorativa preliminare
 A partire da questa sezione si inizia a dare una risposta alle domande che sono state poste precedentemente.
@@ -298,17 +304,17 @@ g %>%
   geom_node_label(aes(filter = centrality > 1000, label = name), repel = TRUE, alpha = 0.3) +
   theme_void()
 
-res <- g %>% 
+betw_res <- g %>% 
   mutate(centrality = centrality_betweenness(directed = TRUE)) %>%
   as_tibble() %>%
   arrange(desc(centrality)) %>%
   select_at(vars(aerialway, name, centrality))
 
-summary(res$centrality)
+summary(betw_res$centrality)
 
 ```
 
-I quindici impianti più importanti sono: `r res[1:15,]$name`.
+I quindici impianti più importanti sono: `r betw_res[1:15,]$name`.
 Molti degli impianti elencati sono infatti tra quelli obbligati, e più cruciali, per permettere il classico giro del sellaronda. 
 Sono impianti di risalita senza i quali non sarebbe possibile completare il collegamento tra le diverse vallate o, di raggiungere impianti cruciali per continuare il percorso.
 
@@ -335,24 +341,24 @@ g %>%
   geom_node_label(aes(filter = centrality > 8, label = name), repel = TRUE, alpha = 0.3) +
   theme_void()
 
-res <- g %>%
+out_degree_res <- g %>%
   mutate(centrality = centrality_degree(mode = 'out')) %>%
   as_tibble() %>%
   arrange(desc(centrality)) %>%
-  select_at(vars(aerialway, name, centrality))
+  select_at(vars(aerialway, name, centrality, ref))
 
-summary(res$centrality)
+summary(out_degree_res$centrality)
 
 ```
 
-I dieci impianti più centrali secondo questo parametro sono: `r res[1:10,]$name`.
+I dieci impianti più centrali secondo questo parametro sono: `r out_degree_res[1:10,]$name`.
 
 ```{r Distribuzione centralita istogramma, echo=FALSE, fig.align='center', fig.retina=2, fig.width=12}
 ggplot() +
-  geom_col(data = res, aes(x = name, y = centrality, fill = 'blue'), alpha = 0.85) +
-  geom_col(data = res[1:10,], aes(x = name, y = centrality, fill='red'), alpha = 1) +
+  geom_col(data = out_degree_res, aes(x = paste(ref,name), y = centrality, fill = 'blue'), alpha = 0.85) +
+  geom_col(data = out_degree_res[1:10,], aes(x = paste(ref,name), y = centrality, fill='red'), alpha = 1) +
   xlab("") + ylab('Centralita') +
-  scale_fill_identity(name = '', guide = 'legend', labels = c('Tutti', 'Top')) +
+  scale_fill_identity(name = '', guide = 'legend', labels = c('Altri', 'Top 10')) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 ```
 
@@ -369,6 +375,8 @@ La similitudine può essere espressa in due termini:
 
 ### Visualizzazione prima tipologia similarità
 Sono riportate di seguito le immagini satellitari della disposizione geografica degli impianti di risalita che presentano similarità per il gruppo di impianti dai quali sono raggiungibili.
+
+_I pallini blu rappresentano gli arrivi di tutti gli impianti di risalita dai quali è possibile raggiungere la partenza degli impianti evidenziati dal pallino di colore rosso. Si può notare come questi ultimi siano disposti geograficamente vicini o siano raggiungibili attraverso le stesse piste da sci._
 ```{r Calcolo similarita nodi in, echo=FALSE, fig.align='center', fig.height=8, fig.retina=2, fig.width=8, message=FALSE}
 # Calcolo similarità attraverso funzione similarity di igraph
 sim_in <- similarity(g, mode = 'in')
@@ -392,18 +400,18 @@ for(i in 1:length(couples)){
     ggmap() +
       geom_node_point(data = data.frame(x = neig$last_node_lon, y = neig$last_node_lat), aes(x = x, y = y), colour = 'blue', size = 4) +
       geom_node_point(aes(x = n1$first_node_lon, y = n1$first_node_lat), colour = 'red', size = 4) +
-      #geom_node_label(aes(x = n1$first_node_lon, y = n1$first_node_lat, label = impianti_analisi[couples[[i]][1],]$name), repel = TRUE, alpha = 0.2) +
+      geom_node_text(aes(x = n1$first_node_lon, y = n1$first_node_lat, label = impianti_analisi[couples[[i]][1],]$name), alpha = 0.3) +
       geom_node_point(aes(x = n2$first_node_lon, y = n2$first_node_lat), colour = 'red', size = 4) +
+      geom_node_text(aes(x = n2$first_node_lon, y = n2$first_node_lat, label = impianti_analisi[couples[[i]][2],]$name), alpha = 0.3) +
       labs(title = "Similarita' impianti rispetto raggiungibilita'", subtitle = paste(n1$name,n2$name, sep = ' | ')))
-      #geom_node_label(aes(x = n2$first_node_lon, y = n2$first_node_lat, label = impianti_analisi[couples[[i]][2],]$name), repel = TRUE, alpha = 0.2))
   
 }
 ```
 
-I pallini blu rappresentano gli arrivi di tutti gli impianti di risalita dai quali è possibile raggiungere la partenza degli impianti evidenziati dal pallino di colore rosso. Si può notare come questi ultimi siano disposti geograficamente vicini o siano raggiungibili attraverso le stesse piste da sci.
-
 ### Visualizzazione seconda tipologia similarità
 Sono riportate di seguito le immagini satellitari della disposizione geografica degli impianti di risalita che presentano similarità per il gruppo di impianti che possono essere raggiunti dalla loro stazione di arrivo.
+
+_I punti blu rappresentano le partenze di tutti gli impianti di risalita che è possibile raggiungere partendo dall'arrivo degli impianti evidenziati dai punti di colore rosso. Si può notare come questi ultimi si trovino nella stessa cima, a poca distanza, il che permette agli sciatori di percorrere le stesse piste da sci._
 ```{r Calcolo similarita nodi out, echo=FALSE, fig.align='center', fig.height=8, fig.retina=2, fig.width=8, message=FALSE}
 
 # Calcolo similarità attraverso funzione similarity di igraph
@@ -428,15 +436,14 @@ for(i in 1:length(couples)){
     ggmap() +
       geom_node_point(data = data.frame(x = neig$first_node_lon, y = neig$first_node_lat), aes(x = x, y = y), colour = 'blue', size = 4) +
       geom_node_point(aes(x = n1$last_node_lon, y = n1$last_node_lat), colour = 'red', size = 4) +
-      #geom_node_label(aes(x = n1$first_node_lon, y = n1$first_node_lat, label = impianti_analisi[couples[[i]][1],]$name), repel = TRUE, alpha = 0.2) +
+      geom_node_text(aes(x = n1$last_node_lon, y = n1$last_node_lat, label = impianti_analisi[couples[[i]][1],]$name), alpha = 0.3) +
       geom_node_point(aes(x = n2$last_node_lon, y = n2$last_node_lat), colour = 'red', size = 4) +
+      geom_node_text(aes(x = n2$last_node_lon, y = n2$last_node_lat, label = impianti_analisi[couples[[i]][2],]$name), alpha = 0.3) +
       labs(title = "Similarita' impianti rispetto ai raggiungibili", subtitle = paste(n1$name,n2$name, sep = ' | ')))
-      #geom_node_label(aes(x = n2$first_node_lon, y = n2$first_node_lat, label = impianti_analisi[couples[[i]][2],]$name), repel = TRUE, alpha = 0.2))
   
 }
 
 ```
-I punti blu rappresentano le partenze di tutti gli impianti di risalita che è possibile raggiungere partendo dall'arrivo degli impianti evidenziati dai punti di colore rosso. Si può notare come questi ultimi si trovino nella stessa cima, a poca distanza, il che permette agli sciatori di percorrere le stesse piste da sci.
 
 ### Nota sulle similarità
 Questo indice di somiglianza rappresenta principalmente una curiosità che potrebbe stuzzicare la mente di alcuni sciatori che vorrebbero avere una conoscenza della topologia della rete più approfondita.
@@ -505,17 +512,17 @@ res <- g %>%
   mutate(centrality = centrality_betweenness(directed = TRUE)) %>%
   as_tibble() %>%
   arrange(desc(centrality)) %>%
-  select_at(vars(aerialway, name, centrality))
+  select_at(vars(aerialway, name, centrality, ref))
 
 res1 <- gdel %>% 
   mutate(centrality = centrality_betweenness(directed = TRUE)) %>%
   as_tibble() %>%
   arrange(desc(centrality)) %>%
-  select_at(vars(aerialway, name, centrality))
+  select_at(vars(aerialway, name, centrality, ref))
 
 ggplot(res) +
-  geom_col(aes(x = name, y = centrality, fill = 'black')) +
-  geom_col(data = res1, aes(x = name, y = centrality, fill='red', color='red'), alpha = 0.2, show.legend = FALSE) +
+  geom_col(aes(x = paste(ref,name), y = centrality, fill = 'black')) +
+  geom_col(data = res1, aes(x = paste(ref,name), y = centrality, fill='red', color='red'), alpha = 0.2, show.legend = FALSE) +
   ylim(0, 3300) +
   xlab("") + ylab('Centralita') +
   guides(x = guide_legend(title = 'Colore')) +
@@ -527,6 +534,20 @@ ggplot(res) +
 Nel grafico si può notare come la distribuzione della centralità nell'istogramma di colore nero sia abbastanza equidistribuita e non sia presente un chiaro impianto di risalita più centrale rispetto a tutti gli altri.
 Al contrario, quando la rete subisce la chiusura degli impianti suddetti, emerge un impianto chiave, il `r res1[1,]$name`.
 Il flusso degli sciatori si accentra sopratutto attraverso questo impianto, che diventa chiave per mantenere la mobilita all'interno della rete.
+
+```{r Visualizzazione centralita modificata, echo=FALSE, fig.align='center', fig.height=8, fig.width=12, fig.retina=2}
+gdel %>%
+  mutate(centrality = centrality_betweenness(directed = TRUE)) %>%
+  ggraph(layout = 'kk') +
+  geom_edge_link(
+    alpha = 0.25,
+    show.legend = FALSE
+  ) + 
+  geom_node_point(aes(size = centrality, color = centrality, shape = aerialway), show.legend = TRUE) +
+  geom_node_label(aes(filter = centrality > 1000, label = name), repel = TRUE, alpha = 0.3) +
+  theme_void()
+```
+
 
 ## Quanto è robusta la rete?
 La rete di trasporto è formata da un insime di impianti interconnessi tra loro.
@@ -564,7 +585,7 @@ percolate = function(g, size, d) {
 
 ```
 
-```{r Grafico di percolazione, echo=FALSE}
+```{r Grafico di percolazione, echo=FALSE, fig.align='center'}
 
 size = vcount(g)/2
 # random
@@ -593,11 +614,11 @@ Se un guasto casuale dovesse capitare proprio a questo impianto, la degradazione
 ## Quanti impianti deve attraversare mediamente uno sciatore per raggiungerne un altro qualisasi?
 > Ci riferiremo a distanza come numero di impianti che uno sciatore deve prendere per perccorrere il cammino fino ad un altro impianto.
 
-Mediamente all'interno di questa rete, la distanza tra due impianti qualsiasi è di `r mean_distance(g)`.
-Questo vuol dire che uno sciatore in qualsiasi momento, per raggiungere un altro impianto qualsiasi (che non sia il direttamente successivo naturalmente) dovrà prendere nella media almeno `r mean_distance(g)` altri impianti.
+Mediamente all'interno di questa rete, la distanza tra due impianti qualsiasi è di `r round(mean_distance(g),2)`.
+Questo vuol dire che uno sciatore in qualsiasi momento, per raggiungere un altro impianto qualsiasi dovrà prendere nella media almeno `r round(mean_distance(g),2)` altri impianti.
 
 Nel grafico sottostante è riportato l'istogramma delle distanze degli impianti della rete.
-```{r Istogramma distanza, echo=FALSE}
+```{r Istogramma distanza, echo=FALSE, fig.align='center'}
 paths = distance_table(g)$res
 names(paths) = 1:length(paths)
 barplot(paths / sum(paths), xlab = "Distanza", ylab = "Frequenza")

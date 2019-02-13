@@ -125,6 +125,41 @@ $(document).ready(function () {
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#introduzione">Introduzione</a><ul>
+<li><a href="#descrizione-contesto-della-rete">Descrizione contesto della rete</a></li>
+<li><a href="#obiettivi">Obiettivi</a></li>
+<li><a href="#descrizione-dataset">Descrizione dataset</a><ul>
+<li><a href="#reperimento-informazioni-base-impianti-risalita">Reperimento informazioni base impianti risalita</a></li>
+<li><a href="#filtro-prime-informazioni"> Filtro prime informazioni</a></li>
+<li><a href="#costruzione-matrice-adiacenza">Costruzione matrice adiacenza</a></li>
+<li><a href="#completamento-costruzione-dataset">Completamento costruzione dataset</a></li>
+<li><a href="#informazioni-di-riferimento">Informazioni di riferimento</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#analisi-esplorativa-preliminare">Analisi esplorativa preliminare</a><ul>
+<li><a href="#quale-la-distribuzione-della-tipologia-degli-impianti-di-risalita">Qual’è la distribuzione della tipologia degli impianti di risalita?</a></li>
+<li><a href="#quale-il-dislivello-medio-che-viene-effettuato-dagli-impianti">Qual’è il dislivello medio che viene effettuato dagli impianti?</a></li>
+</ul></li>
+<li><a href="#analisi-rete">Analisi rete</a><ul>
+<li><a href="#visualizzazione-rete">Visualizzazione rete</a></li>
+<li><a href="#studio-centralita">Studio centralità</a><ul>
+<li><a href="#quali-sono-gli-impianti-piu-centrali-nelleffettuare-il-giro-del-sellaronda">Quali sono gli impianti più centrali nell’effettuare il giro del sellaronda?</a></li>
+<li><a href="#quali-sono-gli-impianti-che-permettono-di-variare-di-piu-il-proprio-percorso-sciistico">Quali sono gli impianti che permettono di variare di più il proprio percorso sciistico?</a></li>
+</ul></li>
+<li><a href="#ci-sono-degli-impianti-molto-simili-nella-rete-se-si-quali">Ci sono degli impianti molto simili nella rete? Se si, quali?</a><ul>
+<li><a href="#visualizzazione-prima-tipologia-similarita">Visualizzazione prima tipologia similarità</a></li>
+<li><a href="#visualizzazione-seconda-tipologia-similarita">Visualizzazione seconda tipologia similarità</a></li>
+<li><a href="#nota-sulle-similarita">Nota sulle similarità</a></li>
+</ul></li>
+<li><a href="#come-sono-suddivisi-gli-impianti-della-rete-rispetto-alle-connessioni-fra-essi">Come sono suddivisi gli impianti della rete rispetto alle connessioni fra essi?</a></li>
+<li><a href="#che-cosa-succede-alla-rete-se-degli-impianti-vengono-chiusi">Che cosa succede alla rete se degli impianti vengono chiusi?</a></li>
+<li><a href="#quanto-e-robusta-la-rete">Quanto è robusta la rete?</a></li>
+<li><a href="#quanti-impianti-deve-attraversare-mediamente-uno-sciatore-per-raggiungerne-un-altro-qualisasi">Quanti impianti deve attraversare mediamente uno sciatore per raggiungerne un altro qualisasi?</a></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="introduzione" class="section level1">
 <h1>Introduzione</h1>
@@ -191,7 +226,7 @@ $(document).ready(function () {
 <blockquote>
 <p>Salendo su un impianto di risalita, arrivato a monte, quali sono gli altri impianti di risalita raggiungibili?</p>
 </blockquote>
-<p><img src="imgs/ESEMPIO_MAPPING_1.png" /> <br><br> Effettuando i collegamenti tramite questa logica si sono ottenuti gli archi del grafo. Andando oltre, è stata creata automaticamente una matrice di adiacenza, sempre all’interno di fogli, che teneva in considerazione del mapping degli impianti.</p>
+<p><img src="imgs/ESEMPIO_MAPPING_2.png" /> <br><br> Effettuando i collegamenti tramite questa logica si sono ottenuti gli archi del grafo. Andando oltre, è stata creata automaticamente una matrice di adiacenza, sempre all’interno di fogli, che teneva in considerazione del mapping degli impianti.</p>
 <p><img src="imgs/FOGLI_IMPIANTI.png" /> <img src="imgs/FOGLI_COLLEGAMENTI.png" /> <img src="imgs/FOGLI_ADJ.png" /></p>
 </div>
 <div id="completamento-costruzione-dataset" class="section level3">
@@ -261,13 +296,12 @@ $(document).ready(function () {
 </div>
 <div id="informazioni-di-riferimento" class="section level3">
 <h3>Informazioni di riferimento</h3>
-<ul>
-<li>Numero impianti rilevati: 139.</li>
-<li>Numero impianti connessi: 96.</li>
-<li>Dimensione matrice di adiacenza: 139x139.</li>
-<li>Numero impianti inclusi erroneamente: 1. <em>Questo impianto è incluso nel totale dei 139, ma non è stato incluso nelle analisi.</em></li>
-</ul>
-<p>Con numero di impianti connessi si intende l’effettivo numero di nodi (impianti di risalita) che compongono la rete. Tramite la struttura dati del grafo (oggetto <code>tbl_graph</code>), eliminando ogni nodo con grado 0 (ovvero senza alcun collegamento con altri impianti di risalita), sono stati tenuti in considerazione solamente i dati dei rimanenti 96 nodi.</p>
+<p>Dal file json, e dai successivi filtri, sono stati rilevati 139 impianti. Di questi 139 impianti, sono stati connessi, ovvero hanno partecipato al componimento della rete, solamente 96. Questi 96, sono impianti che, nel processo di costruzione della matrice di adiacenza, hanno visto creare almeno un arco in ingresso o uscita dal nodo associato.</p>
+<p>Quindi, per riassumere: - Numero impianti rilevati: 139. - Numero impianti connessi: 96. <em>Effettivo numero di nodi (impianti di risalita) che compongono la rete</em> - Dimensione matrice di adiacenza: 139x139.</p>
+<p>Tramite la struttura dati del grafo (oggetto <code>tbl_graph</code>), eliminando ogni nodo con grado 0 (ovvero senza alcun collegamento con altri impianti di risalita), sono stati tenuti in considerazione solamente i dati dei nodi connessi.</p>
+<blockquote>
+<p>Durante le analisi, è stato rilevato, tra i 139 impianti rilevati, un impianto di una categoria che non voleva essere presa in analisi. Questo non ha influito perché l’impianto non è stato connesso alla rete, quindi scartato nel processo di costruzione di quest’ultima, e di successiva analisi. E’ tenuto in considerazione solo all’interno della matrice di adiacenza.</p>
+</blockquote>
 </div>
 </div>
 </div>
@@ -334,12 +368,13 @@ $(document).ready(function () {
 <p>In questa sezione viene analizzata la presenza di impianti di risalita che si presentano simili. La similitudine può essere espressa in due termini: - Gli impianti sono simili se hanno molti impianti uguali dai quali possono essere raggiunti. Per uno sciatore, quindi, due impianti sono simili se, salendo su uno di questi, il gruppo di impianti raggiungibili smontando è simile a quello di un altro impianto che avrebbe potuto prendere. - Gli impianti sono simili se raggiungono molti impianti uguali. Al contrario, due impianti possono essere simili, se per uno sciatore è possibile raggiungerli da uno stesso gruppo di impianti.</p>
 <div id="visualizzazione-prima-tipologia-similarita" class="section level3">
 <h3>Visualizzazione prima tipologia similarità</h3>
-<p>Sono riportate di seguito le immagini satellitari della disposizione geografica degli impianti di risalita che presentano similarità per il gruppo di impianti dai quali sono raggiungibili. <img src="report_analysis_files/figure-html/Calcolo%20similarita%20nodi%20in-1.png" width="768" style="display: block; margin: auto;" /><img src="report_analysis_files/figure-html/Calcolo%20similarita%20nodi%20in-2.png" width="768" style="display: block; margin: auto;" /></p>
-<p>I pallini blu rappresentano gli arrivi di tutti gli impianti di risalita dai quali è possibile raggiungere la partenza degli impianti evidenziati dal pallino di colore rosso. Si può notare come questi ultimi siano disposti geograficamente vicini o siano raggiungibili attraverso le stesse piste da sci.</p>
+<p>Sono riportate di seguito le immagini satellitari della disposizione geografica degli impianti di risalita che presentano similarità per il gruppo di impianti dai quali sono raggiungibili.</p>
+<p><em>I pallini blu rappresentano gli arrivi di tutti gli impianti di risalita dai quali è possibile raggiungere la partenza degli impianti evidenziati dal pallino di colore rosso. Si può notare come questi ultimi siano disposti geograficamente vicini o siano raggiungibili attraverso le stesse piste da sci.</em> <img src="report_analysis_files/figure-html/Calcolo%20similarita%20nodi%20in-1.png" width="768" style="display: block; margin: auto;" /><img src="report_analysis_files/figure-html/Calcolo%20similarita%20nodi%20in-2.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 <div id="visualizzazione-seconda-tipologia-similarita" class="section level3">
 <h3>Visualizzazione seconda tipologia similarità</h3>
-<p>Sono riportate di seguito le immagini satellitari della disposizione geografica degli impianti di risalita che presentano similarità per il gruppo di impianti che possono essere raggiunti dalla loro stazione di arrivo. <img src="report_analysis_files/figure-html/Calcolo%20similarita%20nodi%20out-1.png" width="768" style="display: block; margin: auto;" /> I punti blu rappresentano le partenze di tutti gli impianti di risalita che è possibile raggiungere partendo dall’arrivo degli impianti evidenziati dai punti di colore rosso. Si può notare come questi ultimi si trovino nella stessa cima, a poca distanza, il che permette agli sciatori di percorrere le stesse piste da sci.</p>
+<p>Sono riportate di seguito le immagini satellitari della disposizione geografica degli impianti di risalita che presentano similarità per il gruppo di impianti che possono essere raggiunti dalla loro stazione di arrivo.</p>
+<p><em>I punti blu rappresentano le partenze di tutti gli impianti di risalita che è possibile raggiungere partendo dall’arrivo degli impianti evidenziati dai punti di colore rosso. Si può notare come questi ultimi si trovino nella stessa cima, a poca distanza, il che permette agli sciatori di percorrere le stesse piste da sci.</em> <img src="report_analysis_files/figure-html/Calcolo%20similarita%20nodi%20out-1.png" width="768" style="display: block; margin: auto;" /></p>
 </div>
 <div id="nota-sulle-similarita" class="section level3">
 <h3>Nota sulle similarità</h3>
@@ -361,12 +396,13 @@ $(document).ready(function () {
 <p>C’è stata anche una variazione rispetto alla centralità di ogni singolo impianto a seguito della chiusura. Si può vedere come questa abbia influito grazie al grafico seguente.</p>
 <p><img src="report_analysis_files/figure-html/Istogramma%20centralita-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <p>Nel grafico si può notare come la distribuzione della centralità nell’istogramma di colore nero sia abbastanza equidistribuita e non sia presente un chiaro impianto di risalita più centrale rispetto a tutti gli altri. Al contrario, quando la rete subisce la chiusura degli impianti suddetti, emerge un impianto chiave, il Borest. Il flusso degli sciatori si accentra sopratutto attraverso questo impianto, che diventa chiave per mantenere la mobilita all’interno della rete.</p>
+<p><img src="report_analysis_files/figure-html/Visualizzazione%20centralita%20modificata-1.png" width="1152" style="display: block; margin: auto;" /></p>
 </div>
 <div id="quanto-e-robusta-la-rete" class="section level2">
 <h2>Quanto è robusta la rete?</h2>
 <p>La rete di trasporto è formata da un insime di impianti interconnessi tra loro. La maggiorparte degli impianti è raggiungibile da qualsiasi altro impianto, tutti quelli che soddisfano questa assunzione si dice facciano parte del gruppo più connesso della rete. Per avere una stima di quanto robusta sia la rete, possiamo effettuare la rimozione di nodi da essa, in base a determinati parametri, e osservare come diminuisce il numero di impianti appartenendi al gruppo più connesso. Il primo di questi, e quello più banale, è sicuramente in modo casuale. La rimozione casusale di un nodo è possibile pensarla come un guasto ad un impianto, non si può prevedere ed è casuale all’interno della rete. Che cosa succede però se la rimozione non avviene casualmente, se è determinata da una proprietà dell’impianto? Verrà infatti visualizzato l’effetto della rimozione degli impianti più centrali, e cosa causano alla rete.</p>
 <p>Minore sarà la grandezza del gruppo più connesso, maggiore sarà la disconnessione generale dell’intera rete, e, di conseguenza, la difficoltà e impossibilità della viabilità sciistica all’interno di essa.</p>
-<p><img src="report_analysis_files/figure-html/Grafico%20di%20percolazione-1.png" width="672" /></p>
+<p><img src="report_analysis_files/figure-html/Grafico%20di%20percolazione-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Si può notare come la rimozione di nodi cruciali per il collegamento (flusso) comportino una separazione rapida della rete (quasi dimezzando la grandezza del gruppo). Una degradazione più regolare si ottiene dalle rimozioni degli impianti a partire da quelli che hanno un elevato numero di collegamenti verso altri. Infine, la rimozione di impianti casuali, sembra essere la situazione che degrada meno velocemente. C’è però da dire che talvolta questa rimozione causa un brusco aridimensionamento del gruppo. Infatti il grado di connettività della rete è 1. Questo vuol dire che basta rimuovere un solo impianto per separare (e quindi disconnettere) il gruppo di impianti. Se un guasto casuale dovesse capitare proprio a questo impianto, la degradazione sarebbe peggiore in questa situazione rispetto ad una controllata.</p>
 </div>
 <div id="quanti-impianti-deve-attraversare-mediamente-uno-sciatore-per-raggiungerne-un-altro-qualisasi" class="section level2">
@@ -374,8 +410,8 @@ $(document).ready(function () {
 <blockquote>
 <p>Ci riferiremo a distanza come numero di impianti che uno sciatore deve prendere per perccorrere il cammino fino ad un altro impianto.</p>
 </blockquote>
-<p>Mediamente all’interno di questa rete, la distanza tra due impianti qualsiasi è di 6.1853303. Questo vuol dire che uno sciatore in qualsiasi momento, per raggiungere un altro impianto qualsiasi (che non sia il direttamente successivo naturalmente) dovrà prendere nella media almeno 6.1853303 altri impianti.</p>
-<p>Nel grafico sottostante è riportato l’istogramma delle distanze degli impianti della rete. <img src="report_analysis_files/figure-html/Istogramma%20distanza-1.png" width="672" /></p>
+<p>Mediamente all’interno di questa rete, la distanza tra due impianti qualsiasi è di 6.19. Questo vuol dire che uno sciatore in qualsiasi momento, per raggiungere un altro impianto qualsiasi dovrà prendere nella media almeno 6.19 altri impianti.</p>
+<p>Nel grafico sottostante è riportato l’istogramma delle distanze degli impianti della rete. <img src="report_analysis_files/figure-html/Istogramma%20distanza-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Il percorso di distanza maggiore tra due impianti della rete, invece, è lungo 18 impianti. Gli impianti che compongono questo percorso sono: Santa Cristina - Monte Pana, Monte Seura, Tramans, Fungeia, Costabella, Dantercepies, Borest, Costes de L’Ega, Col Alto, Braia Fraida, Pre dai Corf, Piz la Ila, Colz, Doninz, Gardenaccia, Sponata, Pradüc, Santa Croce, La Crusc.</p>
 </div>
 </div>
