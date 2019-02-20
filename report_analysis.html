@@ -297,7 +297,12 @@ $(document).ready(function () {
 <div id="informazioni-di-riferimento" class="section level3">
 <h3>Informazioni di riferimento</h3>
 <p>Dal file json, e dai successivi filtri, sono stati rilevati 139 impianti. Di questi 139 impianti, sono stati connessi, ovvero hanno partecipato al componimento della rete, solamente 96. Questi 96, sono impianti che, nel processo di costruzione della matrice di adiacenza, hanno visto creare almeno un arco in ingresso o uscita dal nodo associato.</p>
-<p>Quindi, per riassumere: - Numero impianti rilevati: 139. - Numero impianti connessi: 96. <em>Effettivo numero di nodi (impianti di risalita) che compongono la rete</em> - Dimensione matrice di adiacenza: 139x139.</p>
+<p>Quindi, per riassumere:</p>
+<ul>
+<li>Numero impianti rilevati: 139.</li>
+<li>Numero impianti connessi: 96. <em>Effettivo numero di nodi (impianti di risalita) che compongono la rete</em></li>
+<li>Dimensione matrice di adiacenza: 139x139.</li>
+</ul>
 <p>Tramite la struttura dati del grafo (oggetto <code>tbl_graph</code>), eliminando ogni nodo con grado 0 (ovvero senza alcun collegamento con altri impianti di risalita), sono stati tenuti in considerazione solamente i dati dei nodi connessi.</p>
 <blockquote>
 <p>Durante le analisi, è stato rilevato, tra i 139 impianti rilevati, un impianto di una categoria che non voleva essere presa in analisi. Questo non ha influito perché l’impianto non è stato connesso alla rete, quindi scartato nel processo di costruzione di quest’ultima, e di successiva analisi. E’ tenuto in considerazione solo all’interno della matrice di adiacenza.</p>
@@ -315,8 +320,8 @@ $(document).ready(function () {
 <p>Gli impianti di risalita sono rispettivamente suddivisi in 3 categorie:</p>
 <ul>
 <li><code>cable_car</code> (Funivia) composta da 8 impianti, rappresenta il 8.3% del totale.</li>
-<li><code>chair_lift</code> (Cabinovia) composta da 67 impianti, rappresenta il 69.8% del totale.</li>
-<li><code>gondola</code> (Seggiovia) composta da 21 impianti, rappresenta il 21.9% del totale.</li>
+<li><code>chair_lift</code> (Seggiovia) composta da 67 impianti, rappresenta il 69.8% del totale.</li>
+<li><code>gondola</code> (Cabinovia) composta da 21 impianti, rappresenta il 21.9% del totale.</li>
 </ul>
 <p><img src="report_analysis_files/figure-html/Plot%20grafico%20distribuzione%20numerosita%20impianti-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>

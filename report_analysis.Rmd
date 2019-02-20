@@ -110,9 +110,10 @@ Dal file json, e dai successivi filtri, sono stati rilevati 139 impianti. Di que
 Questi 96, sono impianti che, nel processo di costruzione della matrice di adiacenza, hanno visto creare almeno un arco in ingresso o uscita dal nodo associato.
 
 Quindi, per riassumere:
-- Numero impianti rilevati: 139.
-- Numero impianti connessi: 96. _Effettivo numero di nodi (impianti di risalita) che compongono la rete_
-- Dimensione matrice di adiacenza: 139x139.
+
+  - Numero impianti rilevati: 139.
+  - Numero impianti connessi: 96. _Effettivo numero di nodi (impianti di risalita) che compongono la rete_
+  - Dimensione matrice di adiacenza: 139x139.
 
 Tramite la struttura dati del grafo (oggetto `tbl_graph`), eliminando ogni nodo con grado 0 (ovvero senza alcun collegamento con altri impianti di risalita), sono stati tenuti in considerazione solamente i dati dei nodi connessi.
 
@@ -189,8 +190,8 @@ res <- impianti_analisi %>%
 Gli impianti di risalita sono rispettivamente suddivisi in `r length(res)` categorie:
 
 - ``r res[1,]$aerialway`` (Funivia) composta da `r res[1,]$n` impianti, rappresenta il `r res[1,]$percent` del totale.
-- ``r res[2,]$aerialway`` (Cabinovia) composta da `r res[2,]$n` impianti, rappresenta il `r res[2,]$percent` del totale.
-- ``r res[3,]$aerialway`` (Seggiovia) composta da `r res[3,]$n` impianti, rappresenta il `r res[3,]$percent` del totale.
+- ``r res[2,]$aerialway`` (Seggiovia) composta da `r res[2,]$n` impianti, rappresenta il `r res[2,]$percent` del totale.
+- ``r res[3,]$aerialway`` (Cabinovia) composta da `r res[3,]$n` impianti, rappresenta il `r res[3,]$percent` del totale.
 
 ```{r Plot grafico distribuzione numerosita impianti, echo=FALSE, fig.align='center'}
 
